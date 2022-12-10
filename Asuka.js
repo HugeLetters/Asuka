@@ -3,13 +3,9 @@ import WebSocket from 'ws';
 import { readdirSync, readFileSync } from 'fs';
 import { dataURItoBlob, randomChoiceArray, randomInteger } from "./utils.js"
 
-const guild = process.env.GUILD_ID;
-const app = process.env.APP_ID;
-const token = process.env.DISCORD_TOKEN
 
-const headers = { "Authorization": `Bot ${token}` }
-const protocol = { http: "https", websocket: "wss" }
-let url = { http: `${protocol.http}://discord.com/api/v10` }
+
+
 
 const response = await fetch(url.http + "/gateway/bot", {
     method: 'GET',
@@ -22,7 +18,7 @@ let lastSkylexmessage = process.env.SKYLEX_LAST_MSG_TIME;
 console.log(url.ws);
 let auth = false;
 let last_seq = null;
-const socket = new WebSocket(url.ws + "/?v=10");
+const socket = new WebSocket(url.ws + "/?v=10&encoding=json");
 const heartbeat = (s, d = null) => {
     s.send(JSON.stringify({
         "op": 1,
