@@ -5,10 +5,8 @@ export function dataURItoBlob(dataURI) {
     byteString = atob(dataURI.split(',')[1]);
   else
     byteString = unescape(dataURI.split(',')[1]);
-
   // separate out the mime component
   var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-
   // write the bytes of the string to a typed array
   var ia = new Uint8Array(byteString.length);
   for (var i = 0; i < byteString.length; i++) {
