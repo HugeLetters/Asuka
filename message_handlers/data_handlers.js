@@ -88,21 +88,22 @@ const commandHandler = async (bot, data, currentCommand) => {
         try {
             Object.assign(commands, await import("../extensions/" + extension + ".js"))
         } catch (e) {
-            console.log(`No such extension as: ${extension} in commands directory`);
+            console.log(e);
+            console.log(`No such extension as: ${extension} in extensions directory`);
             return null;
         };
 
         try {
             Object.assign(alias, commands["alias"]);
+            delete (commands["alias"]);
         } catch (e) {
             console.log(`Your extension "${extension}" does not have an "alias" object exported which is needed to identify bot commands`);
             return null;
         }
-        delete (commands["alias"]);
 
         for (const command_name in commands) {
             const command = commands[command_name];
-            if (alias[command_name].includes(currentCommand)) { command(data, bot) };
+            if (alias[command_name].includes(currentCommand)) { command(data, bot, currentCommand) };
         }
     }
 }

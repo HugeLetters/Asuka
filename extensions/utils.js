@@ -30,3 +30,29 @@ export const randomFile = (folder) => {
   let file = "data:image/png;base64," + readFileSync(filepath, "base64");
   return { data: dataURItoBlob(file), filename };
 }
+
+// files and message_id are in a object because both are optional
+// Please note files should be an array of objects in the form returned by randomFile function
+export const sendMessage = async (bot, channel, message, {files = [], message_id = undefined}) => {
+  let body = new FormData();
+  body.append("payload_json", JSON.stringify({
+    content: message,
+    message_reference: { message_id }
+  }));
+
+  for (let i = 0; i < files.length; i++) {
+    body.append(`files[${i}]`, files[i].data, files[i].filename);
+  };
+  // Converting FormData to Blob to easily measure payload size because of Discord 8MB limit
+  body = await new Response(body).blob()
+
+  // TODO: Prevent sending to large files - test if this solution works
+  if (body.size > bot.MAX_PAYLOAD_SIZE) { console.log("Request is too large"); return null };
+
+  const response = await fetch(`${bot.HTTP_REQUEST_URL}/channels/${channel}/messages`, {
+    method: 'POST',
+    headers: bot.AUTHENTICATION_HEADER,
+    body: body
+  }).then(x => x.json());
+  return response;
+};
