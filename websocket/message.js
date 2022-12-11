@@ -1,22 +1,14 @@
-import { dataOPHandler } from '../message_handlers/commands.js';
+import { dataOPCodeHandler } from '../message_handlers/data_handlers.js';
 
 export const webSocketMessageHandler = async (websocket, config) => {
-
-    const state = {
-        lastSkylexmessage: 0,
-        authenticated: false,
-        lastS: null,
-        heartbeatInterval: 0,
-        ackReceived: true,
-    };
 
     websocket.addEventListener("message", async (event) => {
         console.log('----------------------------------------------------------------------------------------');
         console.log(`[${event.type}] Data received: ${event.data}`);
         const data = JSON.parse(event.data);
-        state.lastS = data.s != null ? data.s : state.lastS;
+        state.sequence = data.s != null ? data.s : state.sequence;
 
-        dataOPHandler(websocket, data, state, config);
+        dataOPCodeHandler(websocket, data, state, config);
 
     });
 };
