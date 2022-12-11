@@ -1,5 +1,6 @@
 import { WebSocket } from "ws";
 import { getGatewayHandler } from "./websocket/gateway.js";
+import { WebSocketOpenHandler } from "./websocket/open.js";
 
 export class Bot {
     constructor(config) {
@@ -24,6 +25,6 @@ export class Bot {
             return null;
         }
         this.websocket = new WebSocket(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
-        // WebSocketOpenHandler(websocket, config);
+        WebSocketOpenHandler(this);
     }
 };

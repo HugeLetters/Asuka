@@ -16,6 +16,7 @@ export const AUTHENTICATION_BODY = {
     // see https://discord.com/developers/docs/topics/gateway#list-of-intents
     "intents": (1 << 9) | (1 << 15) | (1 << 11) | (1 << 12),
 };
+
 // e.g. "https://discord.com/api/v10"
 export const HTTP_REQUEST_URL = process.env.DISCORD_API_ENDPOINT;
 export const WEBSOCKET_GATEWAY_URL = "";
@@ -24,4 +25,4 @@ export const WEBSOCKET_GATEWAY_URL = "";
 export const MAX_PAYLOAD_SIZE = 8357888; //bytes
 
 // 1 HOUR = 3600000 , 1 DAY = 86400000
-export const SOMEONE_IS_TYPING_DELAY = 3600000 * 6;
+export const SOMEONE_IS_TYPING_DELAY = 3600000 * 6; // ms

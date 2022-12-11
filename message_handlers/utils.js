@@ -1,4 +1,5 @@
-export const heartbeat = (websocket, state) => {
-  websocket.send(JSON.stringify({ "op": 1, "d": state.sequence, }));
-  state.ackReceived = false;
+export const heartbeat = (bot) => {
+  const { websocket } = bot;
+  websocket.send(JSON.stringify({ "op": 1, "d": bot.sequence, }));
+  bot.ackReceived = false;
 };
