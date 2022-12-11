@@ -1,4 +1,4 @@
-import { dataOPHandler } from '../commands.js';
+import { dataOPHandler } from '../message_handlers/commands.js';
 
 export const webSocketMessageHandler = async (websocket, config) => {
 

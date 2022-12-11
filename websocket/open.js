@@ -4,7 +4,7 @@ import { webSocketMessageHandler } from './message.js';
 
 export const WebSocketOpenHandler = async (websocket, config) => {
     websocket.addEventListener("open", async (event) => {
-        console.log(`[${event.type}] Connection established: ${event.data}`);
+        console.log(`[${event.type}] Connection established!`);
 
         webSocketCloseHandler(websocket);
         webSocketMessageHandler(websocket, config);
