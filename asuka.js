@@ -1,5 +1,5 @@
-import { getGateway } from "./gateway.js";
-import { webSocketConnectHandler } from "../websocket/connect.js";
+import { getGateway } from "./websocket/gateway.js";
+import { webSocketConnectHandler } from "./websocket/connect.js";
 const config = await import("./config.js");
 
 config.URL.ws = await getGateway(config.URL.http, config.AUTHENTICATION.header);
