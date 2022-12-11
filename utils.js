@@ -14,8 +14,13 @@ export function dataURItoBlob(dataURI) {
   }
 
   return new Blob([ia], { type: mimeString });
-}
+};
 
-export const randomInteger = (min = 0, max = min + 100) => (Math.floor(Math.random() * (max - min + 1) + min))
+export const randomInteger = (min = 0, max = min + 100) => (Math.floor(Math.random() * (max - min + 1) + min));
 
-export const randomChoiceArray = (arr) => (arr[randomInteger(0, arr.length - 1)])
+export const randomChoiceArray = (arr) => (arr[randomInteger(0, arr.length - 1)]);
+
+export const heartbeat = (websocket, state) => {
+  websocket.send(JSON.stringify({ "op": 1, "d": state.lastS, }));
+  state.ackReceived = false;
+};

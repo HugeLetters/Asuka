@@ -1,8 +1,8 @@
-import * as init from "./init.js";
 import { getGateway } from "./gateway.js";
 import { webSocketConnectHandler } from "./websocket/connect.js";
+const config = await import("./config.js");
 
-init.URL.ws = await getGateway(init.URL.http, init.AUTH_HEADER);
-if (!init.URL.ws) { throw "Couldn't get get WebSocket URL" };
+config.URL.ws = await getGateway(config.URL.http, config.AUTHENTICATION.header);
+if (!config.URL.ws) { throw "Couldn't get WebSocket URL" };
 
-webSocketConnectHandler(init);
+webSocketConnectHandler(config);

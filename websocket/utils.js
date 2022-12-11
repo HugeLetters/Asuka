@@ -1,1 +1,0 @@
-export const heartbeat = (websocket, d = null) => { websocket.send(JSON.stringify({ "op": 1, "d": d, })) };
