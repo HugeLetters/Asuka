@@ -108,6 +108,8 @@ const commandHandler = async (bot, data, currentCommand) => {
     }
 }
 
+
+// TODO MAYBE FINISH THIS LATER?
 const typingHandler = async (websocket, data, state, config) => {
     for (const extension of config.EXTENSIONS) {
         try {

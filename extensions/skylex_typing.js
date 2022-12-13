@@ -1,3 +1,5 @@
+// TODO UNFINISHED
+
 import { randomFile } from "./utils";
 
 // SKYLEX печатает
