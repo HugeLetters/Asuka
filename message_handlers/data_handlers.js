@@ -59,20 +59,22 @@ const dataTypeHandler = async (bot, data) => {
     const { t, d } = data;
     const { websocket } = bot;
 
+    if (t == "READY") {
+        console.log("Authenticated");
+        bot.authenticated = true;
+        return null;
+    };
+    if (!bot.authenticated) { return null };
+
     switch (t) {
-        case "READY":
-            console.log("Authenticated");
-            bot.authenticated = true
-            break;
         case "MESSAGE_CREATE":
             console.log(`New message on server: "${d.content}"${d.attachments.length != 0 ? " with attachments" : ""} by ${d.author.username}`)
-            if (!bot.authenticated) { break };
             const match = d.content.match(bot.PREFIX);
             if (!match) { break };
-            commandHandler(bot, d, match[2]);
+            const response = await commandHandler(bot, d, match[2]);
+            responseHandler(response);
             break;
         case "TYPING_START":
-            if (!bot.authenticated) { break };
             // typingHandler(bot, d);
             break;
         default:
@@ -103,11 +105,15 @@ const commandHandler = async (bot, data, currentCommand) => {
 
         for (const command_name in commands) {
             const command = commands[command_name];
-            if (alias[command_name].includes(currentCommand)) { command(data, bot, currentCommand) };
+            if (alias[command_name].includes(currentCommand)) { return command(data, bot, currentCommand) };
         }
     }
 }
 
+const responseHandler = async (response) => {
+    if (response == null) { console.log("Received null/undefined response"); return null };
+    if (![200, 201, 204].includes(response.status)) { console.log(await response.json()) };
+}
 
 // TODO MAYBE FINISH THIS LATER?
 const typingHandler = async (websocket, data, state, config) => {

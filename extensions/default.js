@@ -11,8 +11,7 @@ export const asukaHi = async (data, bot, command) => {
     let prefix = "Ну";
     // JS doesn't recognise cyrillic as letters in regex so this works - something to do with how it handles UNICODE
     if (/[\w]/.test(command)) { prefix = "Well" };
-    const r = await sendMessage(bot, channel_id,
+    return sendMessage(bot, channel_id,
         `${prefix} ${command}${", " + author.username || ""}`,
         { files: [randomFile("./source")], message_id: data.id });
-    console.log(r);
 };
