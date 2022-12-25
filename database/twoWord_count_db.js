@@ -2,10 +2,10 @@ import { DataTypes, Sequelize } from "sequelize";
 import SQL3 from "sqlite3";
 import { filterWordsWithRepeats, SQLRequestAsync } from "./utils.js";
 
-const SQL = new Sequelize('sqlite:asuka.db', { logging: false });
-const Asuka = new SQL3.Database("./asuka.db", SQL3.OPEN_READWRITE, (e) => { console.log(e) });
-// NOT USED but I keep it here to remember it exists in case I need it
-// const queryIF = SQL.getQueryInterface();
+const databaseName="asuka";
+const SQL = new Sequelize(`sqlite:${databaseName}.db`, { logging: false });
+const Asuka = new SQL3.Database(`./${databaseName}.db`, SQL3.OPEN_READONLY, (e) => { console.log(e) });
+
 const tables = {};
 const tableAttributes = {
     "FIRST WORD": {
@@ -42,12 +42,10 @@ tables[serverTable] = SQL.define(serverTable, tableAttributes, {
 );
 tables[serverTable].removeAttribute('id');
 await tables[serverTable].sync({ alter: { alter: true, drop: false } });
-await tables[serverTable].findOrCreate({ where: { "FIRST WORD": "<!ANY!>", "SECOND WORD": "<!END!>", "NEXT WORD": "<!END!>", "COUNT": 1 } });
-await tables[serverTable].findOrCreate({ where: { "FIRST WORD": "<!ANY!>", "SECOND WORD": "<!END!>", "NEXT WORD": "<!TOTAL COUNT!>", "COUNT": 1 } });
 
 let response = 1;
 let SQLCode;
-const regExpWords = /\s+|https?:\/\/\S+|magnet:\?\S+|<@!?\d+>|@here|@everyone|(<:\S+:\d+>)|([^\w\s\dа-я<]{2,})|([,\.!\?%\$]+)|[^\w\s\dа-я]+/i;
+const regExpWords = /\s+|https?:\/\/\S+|magnet:\?\S+|<@!?\d+>|@here|@everyone|(<:\S+:\d+>)|([^\w\s\dа-яё<]{2,})|([,\.!\?%\$]+)|[^\w\s\dа-яё]+/i;
 
 const startIndex = 0;
 const endIndex = 253000;
@@ -83,6 +81,7 @@ while (response && index <= endIndex) {
     if (!message.length) { index++; continue; }
 
     message.push("<!END!>");
+    message.push("<!END!>");
     message.unshift("<!START!>");
 
     // CHECK IF TABLE "AUTHOR" EXISTS
@@ -105,9 +104,6 @@ while (response && index <= endIndex) {
         );
         tables[authorTable].removeAttribute('id');
         await tables[authorTable].sync({ alter: { alter: true, drop: false } });
-        // ADD ROWS FOR <!END!>
-        await tables[authorTable].findOrCreate({ where: { "FIRST WORD": "<!ANY!>", "SECOND WORD": "<!END!>", "NEXT WORD": "<!END!>", "COUNT": 1 } });
-        await tables[authorTable].findOrCreate({ where: { "FIRST WORD": "<!ANY!>", "SECOND WORD": "<!END!>", "NEXT WORD": "<!TOTAL COUNT!>", "COUNT": 1 } });
     };
 
     // LOOP THROUGH PAIRS OF WORDS EXCLUDING FINAL(<!END!>)
