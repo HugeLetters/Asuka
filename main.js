@@ -12,9 +12,9 @@ for (const extension of config.EXTENSIONS) {
     .catch(e => {
       console.log(e);
       console.log(`No such extension as: ${extension} in extensions directory`);
+      Asuka.EXTENSIONS = Asuka.EXTENSIONS.filter(module => module !== extension);
     });
 }
 
-console.log("Here");
 await Asuka.getGateway();
 await Asuka.webSocketConnect();

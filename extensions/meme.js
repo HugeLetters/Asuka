@@ -100,5 +100,5 @@ export const meme = async (data, bot, command, keywords) => {
 };
 
 export default async function (bot) {
-  if (!bot.speechModel) await bot.loadSpeechGenerationModel("database/asuka");
+  await bot.loadSpeechGenerationModel("database/asuka");
 }

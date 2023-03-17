@@ -90,7 +90,11 @@ function checkBirthdays(bot) {
       if (moment(DATE).isBefore(moment())) {
         bot.sendMessage(
           CHANNEL,
-          `${tagUser(BY)}, сегодня праздник у ${WHO}. ${WHO}, с днем рождения!!!!`
+          moment(DATE).format("DD.MM.Y") === moment().format("DD.MM.Y")
+            ? `${tagUser(BY)}, сегодня праздник у ${WHO}. ${WHO}, с днем рождения!!!!`
+            : `${tagUser(BY)}, у ${WHO} был праздник ${moment(DATE).format(
+                "DD.MM.Y"
+              )}, но я похоже проспала...`
         );
         await table.update(
           { DATE: moment(DATE).year(moment().year() + 1) },

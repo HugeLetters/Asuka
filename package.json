@@ -1,7 +1,13 @@
 {
+  "name": "asuka",
+  "version": "0.9",
   "type": "module",
+  "bin": {
+    "asuka": "./main.ps1"
+  },
   "scripts": {
-    "dev": "nodemon ./main.js"
+    "dev": "nodemon ./main.js",
+    "dev:inspect": "nodemon --inspect ./main.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

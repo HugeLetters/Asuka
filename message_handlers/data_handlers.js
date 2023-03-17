@@ -22,6 +22,7 @@ export const dataOPCodeHandler = async (bot, data) => {
 
     case 9:
       // The session has been invalidated. You should reconnect and identify/resume accordingly.
+      console.warn("Session invalidated");
       websocket.close();
       break;
 
@@ -45,7 +46,7 @@ export const dataOPCodeHandler = async (bot, data) => {
         websocket.send(JSON.stringify(msg));
       }
       console.log(`New heartbeat queued in: ${bot.heartbeatInterval}ms`);
-      setTimeout(() => heartbeat(bot), bot.heartbeatInterval);
+      bot.nextHeartbeat = setTimeout(() => heartbeat(bot), bot.heartbeatInterval);
       break;
 
     default:
@@ -54,7 +55,10 @@ export const dataOPCodeHandler = async (bot, data) => {
       break;
   }
 
-  if (!bot.ackReceived) websocket.close(4009, "ACK wasn't received");
+  if (!bot.ackReceived) {
+    console.warn("Didn't receive an ack response");
+    websocket.close();
+  }
 };
 
 const dataTypeHandler = async (bot, data) => {
@@ -66,11 +70,9 @@ const dataTypeHandler = async (bot, data) => {
     bot.authenticated = true;
     bot.resumeGatewayURL = d.resume_gateway_url;
     bot.sessionID = d.session_id;
-    return null;
+    return;
   }
-  if (!bot.authenticated) {
-    return null;
-  }
+  if (!bot.authenticated) return;
 
   switch (t) {
     case "MESSAGE_CREATE":
@@ -103,12 +105,12 @@ const commandHandler = async (bot, data, currentCommand, keywords) => {
     import("../extensions/" + extension + ".js")
       .then(module => {
         const { alias, default: mDefault, ...commands } = module;
-        console.log(mDefault);
         if (!alias) {
           return console.error(
             `Your extension "${extension}" does not have an "alias" object exported which is needed to identify bot commands`
           );
         }
+
         for (const command_name in commands) {
           const command = commands[command_name];
           if (alias[command_name].includes(currentCommand)) {
@@ -129,6 +131,6 @@ const responseHandler = async response => {
     return;
   }
   if (![200, 201, 204].includes(response.status)) {
-    console.log(await response.json());
+    console.log(`Response: ${await response.json()}`);
   }
 };

@@ -20,32 +20,40 @@ export class Bot {
       this.HTTP_REQUEST_URL,
       this.AUTHENTICATION_HEADER
     );
-    if (this.WEBSOCKET_GATEWAY_URL) {
-      return null;
-    }
+    if (this.WEBSOCKET_GATEWAY_URL) return;
 
     console.log("Couldn't get WebSocket URL");
     setTimeout(() => this.getGateway(), 5000);
   }
 
   async webSocketConnect() {
-    if (!this.WEBSOCKET_GATEWAY_URL) {
-      setTimeout(() => this.webSocketConnect(), 5000);
-      return null;
-    }
+    if (!this.WEBSOCKET_GATEWAY_URL) return setTimeout(() => this.webSocketConnect(), 5000);
+
+    console.log(new Date());
+    console.log("Creating new socket");
+    console.log(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
+
+    clearTimeout(this.nextHeartbeat);
+    this.authenticated = false;
+    this.ackReceived = true;
     this.websocket = new WebSocket(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
     WebSocketOpenHandler(this);
   }
 
   async webSocketReconnect() {
+    console.log(new Date());
     console.log("Reconnecting to WebSocket");
+    console.log(this.resumeGatewayURL);
+
+    clearTimeout(this.nextHeartbeat);
+    this.ackReceived = true;
     this.reconnecting = true;
     this.websocket = new WebSocket(this.resumeGatewayURL);
     WebSocketOpenHandler(this);
   }
 
   async loadSpeechGenerationModel(database) {
-    this.speechModel = await databaseToSpeechObject(database);
+    if (!this.speechModel) this.speechModel = await databaseToSpeechObject(database);
   }
 
   // randomWordChance = [0,1]
@@ -81,13 +89,13 @@ export class Bot {
       this.sendMessage(channel, "Хотела кое-что тебе показать, но файл слишком большой 😳", {
         message_id,
       });
-      return null;
+      return;
     }
 
     const response = fetch(`${this.HTTP_REQUEST_URL}/channels/${channel}/messages`, {
       method: "POST",
       headers: this.AUTHENTICATION_HEADER,
-      body: body,
+      body,
     });
     return response;
   }
