@@ -1,12 +1,7 @@
 import "dotenv/config";
 
 // default should be always included
-export const EXTENSIONS = [
-  "default",
-  "birthday",
-  "youtube",
-  // , "meme", "quote"
-];
+export const EXTENSIONS = ["default", "birthday", "youtube", "meme", "quote"];
 export const PREFIX = new RegExp(
   /^(asu?ka|асу?ка|asss?uc?ka)(?:(?:[^а-яё\w]+)([а-яё\w]*)|$)(.*)/,
   "i"
