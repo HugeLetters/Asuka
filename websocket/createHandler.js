@@ -7,7 +7,7 @@ import { WebSocketOpenHandler } from "./open.js";
 export default function (bot) {
   ["open", "error", "close", "message"].forEach(event =>
     bot.websocket.addEventListener(event, e => {
-      console.log(`${moment().format("DD.MM.Y HH:mm:ss")} [${e.type}]`);
+      console.log(`[${e.type}] ${moment().format("DD.MM.Y HH:mm:ss")}`);
     })
   );
 
