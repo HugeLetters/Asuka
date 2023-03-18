@@ -1,7 +1,12 @@
 import "dotenv/config";
 
 // default should be always included
-export const EXTENSIONS = ["default", "birthday", "youtube", "meme", "quote"];
+export const EXTENSIONS = [
+  "default",
+  "birthday",
+  "youtube",
+  // , "meme", "quote"
+];
 export const PREFIX = new RegExp(
   /^(asu?ka|асу?ка|asss?uc?ka)(?:(?:[^а-яё\w]+)([а-яё\w]*)|$)(.*)/,
   "i"
@@ -15,7 +20,7 @@ export const AUTHENTICATION_BODY = {
   token: BOT_TOKEN,
   properties: { os: "windows", browser: "chrome", device: "laptop" },
   // see https://discord.com/developers/docs/topics/gateway#list-of-intents
-  intents: (1 << 9) | (1 << 15) | (1 << 11) | (1 << 12),
+  intents: (1 << 9) | (1 << 15),
 };
 
 // e.g. "https://discord.com/api/v10"
