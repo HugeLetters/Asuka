@@ -1,7 +1,8 @@
+import moment from "moment";
 import { WebSocket } from "ws";
 import { databaseToSpeechObject, generateSentence } from "./speech/speech.js";
 import { getGatewayHandler } from "./websocket/gateway.js";
-import { WebSocketOpenHandler } from "./websocket/open.js";
+import wsCreateHandler from "./websocket/createHandler.js";
 
 export class Bot {
   constructor(config) {
@@ -29,15 +30,14 @@ export class Bot {
   async webSocketConnect() {
     if (!this.WEBSOCKET_GATEWAY_URL) return setTimeout(() => this.webSocketConnect(), 5000);
 
-    console.log(new Date());
-    console.log("Creating new socket");
+    console.log(`${moment().format("DD.MM.Y HH:mm:ss")} Creating new socket`);
     console.log(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
 
     clearTimeout(this.nextHeartbeat);
     this.authenticated = false;
     this.ackReceived = true;
     this.websocket = new WebSocket(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
-    WebSocketOpenHandler(this);
+    wsCreateHandler(this);
   }
 
   async webSocketReconnect() {
@@ -49,7 +49,7 @@ export class Bot {
     this.ackReceived = true;
     this.reconnecting = true;
     this.websocket = new WebSocket(this.resumeGatewayURL);
-    WebSocketOpenHandler(this);
+    wsCreateHandler(this);
   }
 
   async loadSpeechGenerationModel(database) {
