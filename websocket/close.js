@@ -1,8 +1,6 @@
 export const webSocketCloseHandler = async bot => {
   const { websocket } = bot;
   websocket.addEventListener("close", async event => {
-    console.log(`Connection closed: ${event.code} - ${event.reason}`);
-
     switch (event.code) {
       case 4009:
         bot.authenticated ? bot.webSocketReconnect() : bot.webSocketConnect();

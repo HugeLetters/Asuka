@@ -6,9 +6,19 @@ import { webSocketMessageHandler } from "./message.js";
 import { WebSocketOpenHandler } from "./open.js";
 
 export default function (bot) {
-  ["open", "error", "close", "message"].forEach(event =>
-    bot.websocket.addEventListener(event, e => {
-      console.log(colors.cyan(`[${e.type}] ${moment().format("DD.MM.Y HH:mm:ss")}`));
+  ["open", "error", "close", "message"].forEach(eventType =>
+    bot.websocket.addEventListener(eventType, event => {
+      console.log(colors.cyan(`[${event.type}] ${moment().format("DD.MM.Y HH:mm:ss")}`));
+      console.log(
+        colors.yellow(
+          {
+            open: "Connection opened",
+            error: `Error: ${event}`,
+            close: `Connection closed: ${event.code} - ${event.reason}`,
+            message: `Data received: ${event.data}`,
+          }[event.type]
+        )
+      );
     })
   );
 

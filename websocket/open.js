@@ -2,7 +2,6 @@ export const WebSocketOpenHandler = async bot => {
   const { websocket } = bot;
 
   websocket.addEventListener("open", async () => {
-    console.log("Connection opened");
     if (bot.reconnecting) {
       console.log("Sending a reconnect event");
       const resumeEvent = JSON.stringify({
