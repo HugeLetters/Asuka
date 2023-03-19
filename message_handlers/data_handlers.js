@@ -82,10 +82,12 @@ const dataTypeHandler = async (bot, data) => {
         } by ${d.author.username}`
       );
 
+      // eslint-disable-next-line no-case-declarations
       const match = d.content.match(bot.PREFIX);
       if (!match) {
         break;
       }
+      // eslint-disable-next-line no-case-declarations
       const response = await commandHandler(
         bot,
         d,

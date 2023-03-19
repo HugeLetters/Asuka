@@ -12,6 +12,7 @@
   "dependencies": {
     "colors": "1.4.0",
     "dotenv": "^16.0.3",
+    "html-to-text": "^9.0.4",
     "momentjs": "^2.0.0",
     "sequelize": "^6.27.0",
     "sharp": "^0.31.2",

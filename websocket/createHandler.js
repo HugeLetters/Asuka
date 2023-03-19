@@ -26,4 +26,6 @@ export default function (bot) {
   webSocketErrorHandler(bot);
   webSocketCloseHandler(bot);
   webSocketMessageHandler(bot);
+
+  bot.extensionInitializer();
 }

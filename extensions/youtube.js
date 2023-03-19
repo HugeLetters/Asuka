@@ -25,10 +25,6 @@ export const requestWebm = async ({ id: message_id, channel_id }, bot, command, 
 
   return fetch(api_url)
     .then(x => x.json())
-    .then(x => {
-      console.log(x);
-      return x;
-    })
     .then(({ items }) => {
       const video = randomChoiceArray(items);
       const url = new URL("https://youtube.com/watch");

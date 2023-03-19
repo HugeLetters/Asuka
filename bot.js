@@ -99,4 +99,18 @@ export class Bot {
     });
     return response;
   }
+
+  async extensionInitializer() {
+    for (const extension of this.EXTENSIONS) {
+      await import("./extensions/" + extension + ".js")
+        .then(async ({ default: mDefault }) => {
+          if (mDefault) await mDefault(this);
+        })
+        .catch(e => {
+          console.log(e);
+          console.log(`No such extension as: ${extension} in extensions directory`);
+          this.EXTENSIONS = this.EXTENSIONS.filter(module => module !== extension);
+        });
+    }
+  }
 }
