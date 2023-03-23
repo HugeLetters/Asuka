@@ -6,3 +6,5 @@ export const heartbeat = bot => {
 };
 
 export const tagUser = id => `<@${id}>`;
+
+export const tagChannel = id => `<#${id}>`;

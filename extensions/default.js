@@ -4,6 +4,7 @@ import { randomFile } from "./utils.js";
 export const alias = {
   hello: ["привет", "здарова", "hello", "hi", "здравствуй"],
   commands: ["помощь", "команды", "help"],
+  deleteMessage: ["удали", "убери", "delete"],
 };
 
 // INTRODUCTION
@@ -42,4 +43,8 @@ export const commands = ({ channel_id, id: message_id }, bot) => {
       { message_id }
     )
   );
+};
+
+export const deleteMessage = ({ channel_id, referenced_message }, bot) => {
+  referenced_message && bot.deleteMessage(channel_id, referenced_message.id);
 };

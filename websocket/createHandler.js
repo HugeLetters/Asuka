@@ -8,7 +8,7 @@ import { WebSocketOpenHandler } from "./open.js";
 export default function (bot) {
   ["open", "error", "close", "message"].forEach(eventType =>
     bot.websocket.addEventListener(eventType, event => {
-      console.log(colors.cyan(`[${event.type}] ${moment().format("DD.MM.Y HH:mm:ss")}`));
+      console.log(colors.bgCyan(`[${event.type}] ${moment().format("DD.MM.Y HH:mm:ss")}`));
       console.log(
         colors.yellow(
           {

@@ -1,3 +1,4 @@
+import colors from "colors/safe.js";
 import { DataTypes, Sequelize } from "sequelize";
 import SQL3 from "sqlite3";
 import { SQLRequestAsync } from "../database/utils.js";
@@ -32,12 +33,13 @@ export const databaseToSpeechObject = async database => {
 
   const result = await Promise.all(
     tables.map(async table => {
+      const name = table.slice(8);
+      console.log(colors.bgRed(`Loading ${name} speech model`));
       const model = SQL.define(table, modelAttributes, { tableName: table, timestamps: false });
       model.removeAttribute("id");
       model.sync({ alter: { alter: true, drop: false } });
-      const name = table.slice(8);
       const entry = await model.findAll({});
-      return new Promise(async (resolve, reject) => {
+      return new Promise((resolve, reject) => {
         if (!entry) reject("Empty response");
         const model = {};
         entry.forEach(x => {
@@ -54,6 +56,7 @@ export const databaseToSpeechObject = async database => {
         const singleModel = {};
         singleModel[name] = model;
         resolve(singleModel);
+        console.log(colors.bgGreen(`Finished loading ${name} speech model`));
       });
     })
   );

@@ -7,17 +7,17 @@ export const alias = {
 };
 
 export const talk = async ({ id: message_id, channel_id }, bot, command, keywords) => {
-  if (!(keywords[0] === "с" && keywords[1] == "евсеем")) return;
+  if (!/^с комфи/i.test(keywords.join(" "))) return;
   fetchThread()
     .then(thread => {
-      bot.sendMessage(channel_id, `${tagUser(users.get("евсей"))}\n${thread[0]}`);
+      bot.sendMessage(channel_id, `${tagUser(users.get("комфи"))}\n${thread[0]}`);
       bot.evseyDialogueLength = 1;
       bot.evseyCurrentThread = thread;
       bot.evseyLastTalkedToAt = new Date();
     })
     .catch(err => {
       console.error(err);
-      bot.sendMessage(channel_id, `${tagUser(users.get("евсей"))}, ээ, как погода?) 😈`, {
+      bot.sendMessage(channel_id, `${tagUser(users.get("комфи"))}, ээ, как погода?) 😈`, {
         message_id,
       });
     });
@@ -45,7 +45,7 @@ function fetchThread() {
         ? fetchThread()
         : posts.map(
             ({ comment, files }) =>
-              `${convert(comment, htmlParserOptions).replace(/(двач)|(2ch)/g, "евсей") || title}\n${
+              `${convert(comment, htmlParserOptions).replace(/(двач)|(2ch)/g, "комфи") || title}\n${
                 files ? files.map(({ path }) => `https://2ch.hk${path}`).join("\n") : ""
               }`
           )
@@ -57,7 +57,9 @@ function isNSFW(post) {
 }
 
 export default function (bot) {
+  users.set("аска", "1048348518303137792");
   users.set("евсей", "250281615366815744");
+  users.set("комфи", "221739589545492480");
   users.set("хьюго", "241333871747137548");
   users.set("я", "241333871747137548");
 
@@ -78,7 +80,7 @@ function isMessageEvent(data) {
 
 function isUserWantsToTalk(bot, data) {
   return (
-    (data.referenced_message && data.referenced_message.author.id === "1048348518303137792") ||
+    (data.referenced_message && data.referenced_message.author.id === users.get("аска")) ||
     new Date() - bot.evseyLastTalkedToAt < 1000 * 60
   );
 }
@@ -86,7 +88,7 @@ function isUserWantsToTalk(bot, data) {
 function isShouldTalk(bot, data) {
   return (
     isMessageEvent(data) &&
-    data.d.author.id === users.get("евсей") &&
+    data.d.author.id === users.get("комфи") &&
     isUserWantsToTalk(bot, data.d) &&
     bot.evseyCurrentThread &&
     bot.evseyCurrentThread[bot.evseyDialogueLength]

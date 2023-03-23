@@ -100,6 +100,13 @@ export class Bot {
     return response;
   }
 
+  async deleteMessage(channel, message) {
+    fetch(`${this.HTTP_REQUEST_URL}/channels/${channel}/messages/${message}`, {
+      method: "DELETE",
+      headers: this.AUTHENTICATION_HEADER,
+    });
+  }
+
   async extensionInitializer() {
     for (const extension of this.EXTENSIONS) {
       await import("./extensions/" + extension + ".js")
