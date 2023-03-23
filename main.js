@@ -6,3 +6,5 @@ const Asuka = new Bot(config);
 
 await Asuka.getGateway();
 await Asuka.webSocketConnect();
+
+module.exports = Asuka;
