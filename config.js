@@ -19,9 +19,9 @@ export const AUTHENTICATION_BODY = {
 };
 
 // e.g. "https://discord.com/api/v10"
-export const HTTP_REQUEST_URL = process.env.DISCORD_API_ENDPOINT;
+export const HTTP_REQUEST_URL = "https://discord.com/api/v10";
 export const WEBSOCKET_GATEWAY_URL = "";
-export const IMAGE_ENDPOINT = process.env.DISCORD_CDN_ENDPOINT;
+export const IMAGE_ENDPOINT = "https://cdn.discordapp.com";
 
 // 8 MBytes(Discord limit) MINUS ~30000 symbols(just to make sure for headers, body, boundaries etc)
 export const MAX_PAYLOAD_SIZE = 8357888; //bytes
