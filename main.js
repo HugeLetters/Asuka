@@ -8,5 +8,3 @@ await Asuka.getGateway();
 await Asuka.webSocketConnect();
 
 module.exports = Asuka;
-
-1;
