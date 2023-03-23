@@ -1,5 +1,4 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "main.js" }],
   "builds": [{ "src": "main.js", "use": "@now/node" }],
   "routes": [{ "src": "/(.*)", "dest": "main.js" }]
 }
