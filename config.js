@@ -3,7 +3,7 @@ import "dotenv/config";
 // default should be always included
 export const EXTENSIONS = [
   "default",
-  "birthday",
+  // "birthday",
   "youtube",
   "talk",
   // , "meme", "quote"
