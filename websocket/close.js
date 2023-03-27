@@ -5,11 +5,8 @@ export const webSocketCloseHandler = async bot => {
       case 4009:
         bot.authenticated ? bot.webSocketReconnect() : bot.webSocketConnect();
         break;
-      case 1006:
-        setTimeout(() => bot.webSocketConnect(), 10000);
-        break;
       default:
-        bot.webSocketConnect();
+        setTimeout(() => bot.webSocketConnect(), 10000);
         break;
     }
   });

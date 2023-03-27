@@ -32,40 +32,47 @@ export const databaseToSpeechObject = async database => {
   };
 
   const result = await Promise.all(
-    tables.map(async table => {
-      const name = table.slice(8);
-      console.log(colors.bgRed(`Loading ${name} speech model`));
-      const model = SQL.define(table, modelAttributes, { tableName: table, timestamps: false });
-      model.removeAttribute("id");
-      model.sync({ alter: { alter: true, drop: false } });
-      const entry = await model.findAll({});
-      return new Promise((resolve, reject) => {
-        if (!entry) reject("Empty response");
-        const model = {};
-        entry.forEach(x => {
-          x = x.dataValues;
-          if (typeof model[x["FIRST WORD"]] != "object") {
-            model[x["FIRST WORD"]] = {};
-          }
-          if (typeof model[x["FIRST WORD"]][x["SECOND WORD"]] != "object") {
-            model[x["FIRST WORD"]][x["SECOND WORD"]] = {};
-          }
-
-          model[x["FIRST WORD"]][x["SECOND WORD"]][x["NEXT WORD"]] = x["PROBABILITY"];
-        });
-        const singleModel = {};
-        singleModel[name] = model;
-        resolve(singleModel);
-        console.log(colors.bgGreen(`Finished loading ${name} speech model`));
-      });
-    })
+    tables.map(table =>
+      createModel({
+        name: table.slice(8),
+        SQLModel: defineModel({ SQL, modelAttributes, table }),
+      })
+    )
   );
 
   const model = {};
   result.forEach(x => Object.assign(model, x));
-
   return model;
 };
+
+function createModel({ name, SQLModel }) {
+  console.log(colors.bgRed(`Loading ${name} speech model`));
+  return SQLModel.findAll({}).then(data => {
+    if (!data) throw new Error("Empty response");
+    const model = {};
+    data.forEach(x => {
+      x = x.dataValues;
+      if (typeof model[x["FIRST WORD"]] != "object") {
+        model[x["FIRST WORD"]] = {};
+      }
+      if (typeof model[x["FIRST WORD"]][x["SECOND WORD"]] != "object") {
+        model[x["FIRST WORD"]][x["SECOND WORD"]] = {};
+      }
+
+      model[x["FIRST WORD"]][x["SECOND WORD"]][x["NEXT WORD"]] = x["PROBABILITY"];
+    });
+
+    console.log(colors.bgGreen(`Finished loading ${name} speech model`));
+    return { [name]: model };
+  });
+}
+
+function defineModel({ SQL, modelAttributes, table }) {
+  const model = SQL.define(table, modelAttributes, { tableName: table, timestamps: false });
+  model.removeAttribute("id");
+  model.sync({ alter: { alter: true, drop: false } });
+  return model;
+}
 
 export const generateSentence = (bot, user, keywords, maxLength, randomWordChance) => {
   const model = bot.speechModel[user];

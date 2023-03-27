@@ -4,6 +4,7 @@ export const alias = {
 
 // QUOTE
 export const userQuote = async (data, bot, command, keywords) => {
+  console.log("Generating a quote");
   const { channel_id } = data;
   const [author, ...words] = keywords;
   const parameters = { keywords: words, randomWordChance: 0.05 };
@@ -11,7 +12,10 @@ export const userQuote = async (data, bot, command, keywords) => {
   if (bot.TAG_REGEXP.test(author)) {
     const userID = author.match(bot.TAG_REGEXP)[1];
     Object.keys(bot.speechModel).forEach(x => {
-      if (x.includes(userID)) parameters.user = x;
+      if (x.includes(userID)) {
+        parameters.user = x;
+        console.log(`A quote of user: ${x}`);
+      }
     });
   }
 

@@ -3,7 +3,7 @@ export const WebSocketOpenHandler = async bot => {
 
   websocket.addEventListener("open", async () => {
     if (bot.reconnecting) {
-      console.log("Sending a reconnect event");
+      console.log(`Sending a reconnect event with seq - ${bot.sequence}`);
       const resumeEvent = JSON.stringify({
         op: 6,
         d: {
@@ -13,7 +13,6 @@ export const WebSocketOpenHandler = async bot => {
         },
       });
       await websocket.send(resumeEvent);
-      bot.reconnecting = false;
     }
   });
 };

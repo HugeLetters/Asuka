@@ -1,4 +1,5 @@
 import { heartbeat } from "./utils.js";
+import colors from "colors/safe.js";
 
 export const dataOPCodeHandler = async (bot, data) => {
   const { op, s, d, t } = data;
@@ -12,6 +13,7 @@ export const dataOPCodeHandler = async (bot, data) => {
     case 1:
       // immediate heartbeat requested by Discord API
       console.log("Immediate heartbeat requested");
+      clearTimeout(bot.nextHeartbeat);
       heartbeat(bot);
       break;
 
@@ -31,12 +33,14 @@ export const dataOPCodeHandler = async (bot, data) => {
       console.log("Received a Hello");
       bot.heartbeatInterval = d.heartbeat_interval;
       // Discord requests to send the first heartbeat after some random interval thus this
-      setTimeout(() => heartbeat(bot), (bot.heartbeatInterval * Math.random()) / 10);
+      !bot.reconnecting &&
+        setTimeout(() => heartbeat(bot), (bot.heartbeatInterval * Math.random()) / 10);
       break;
 
     case 11:
       //ACK reponse to heartbeat
       bot.ackReceived = true;
+      clearTimeout(bot.noAckTimeout);
       if (!bot.authenticated) {
         console.log("Trying to authenticate");
         const msg = {
@@ -56,8 +60,10 @@ export const dataOPCodeHandler = async (bot, data) => {
   }
 
   if (!bot.ackReceived) {
-    console.warn("Didn't receive an ack response");
-    websocket.close();
+    bot.noAckTimeout = setTimeout(() => {
+      console.warn("Didn't receive an ack response");
+      websocket.close();
+    }, 5000);
   }
 };
 
@@ -65,28 +71,34 @@ const dataTypeHandler = async (bot, data) => {
   const { t, d } = data;
   const { websocket } = bot;
 
-  if (t == "READY") {
-    console.log("Authenticated");
-    bot.authenticated = true;
-    bot.resumeGatewayURL = d.resume_gateway_url;
-    bot.sessionID = d.session_id;
-    return;
-  }
-  if (!bot.authenticated) return;
-
   switch (t) {
+    case "READY":
+      console.log(colors.bgGreen.black("Authenticated"));
+      bot.authenticated = true;
+      bot.resumeGatewayURL = d.resume_gateway_url;
+      bot.sessionID = d.session_id;
+      return;
+    case "RESUMED":
+      console.log(colors.bgGreen.black("Connection resumed"));
+      bot.reconnecting = false;
+      setTimeout(() => heartbeat(bot), (bot.heartbeatInterval * Math.random()) / 10);
+      return;
     case "MESSAGE_CREATE":
       console.log(
-        `New message on server: "${d.content}"${
-          d.attachments.length != 0 ? " with attachments" : ""
-        } by ${d.author.username}`
+        colors.bgYellow.black(
+          `New message on server: "${d.content}"${
+            d.attachments.length != 0 ? " with attachments" : ""
+          } by ${d.author.username}`
+        )
       );
 
+      if (!bot.authenticated)
+        return console.log(
+          colors.bgRed("Message will not be parsed because bot is not authenticated")
+        );
       // eslint-disable-next-line no-case-declarations
       const match = d.content.match(bot.PREFIX);
-      if (!match) {
-        break;
-      }
+      if (!match) break;
       // eslint-disable-next-line no-case-declarations
       const response = await commandHandler(
         bot,
@@ -96,8 +108,8 @@ const dataTypeHandler = async (bot, data) => {
       );
       responseHandler(response);
       break;
-
     default:
+      console.log(colors.bgRed.black("Unhandled event"));
       break;
   }
 };

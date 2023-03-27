@@ -10,7 +10,6 @@ export class Bot {
       authenticated: false,
       sequence: null,
       ackReceived: true,
-      testProperty: 1,
       reconnecting: false,
     };
     Object.assign(this, config, state);
@@ -34,6 +33,7 @@ export class Bot {
     console.log(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
 
     clearTimeout(this.nextHeartbeat);
+    clearTimeout(this.noAckTimeout);
     this.authenticated = false;
     this.ackReceived = true;
     this.websocket = new WebSocket(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
@@ -46,6 +46,7 @@ export class Bot {
     console.log(this.resumeGatewayURL);
 
     clearTimeout(this.nextHeartbeat);
+    clearTimeout(this.noAckTimeout);
     this.ackReceived = true;
     this.reconnecting = true;
     this.websocket = new WebSocket(this.resumeGatewayURL);
