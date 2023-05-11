@@ -22,7 +22,7 @@ export class Bot {
     );
     if (this.WEBSOCKET_GATEWAY_URL) return;
 
-    console.log("Couldn't get WebSocket URL");
+    console.log("Couldn't get WebSocket URL, retrying in 5 seconds");
     setTimeout(() => this.getGateway(), 5000);
   }
 
@@ -35,6 +35,7 @@ export class Bot {
     clearTimeout(this.nextHeartbeat);
     clearTimeout(this.noAckTimeout);
     this.authenticated = false;
+    this.reconnecting = false;
     this.ackReceived = true;
     this.websocket = new WebSocket(this.WEBSOCKET_GATEWAY_URL + "/?v=10&encoding=json");
     wsCreateHandler(this);
@@ -102,6 +103,7 @@ export class Bot {
   }
 
   async deleteMessage(channel, message) {
+    console.log(`Deleting message ${message} on channel ${channel}`);
     fetch(`${this.HTTP_REQUEST_URL}/channels/${channel}/messages/${message}`, {
       method: "DELETE",
       headers: this.AUTHENTICATION_HEADER,

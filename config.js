@@ -15,7 +15,7 @@ export const AUTHENTICATION_BODY = {
   token: BOT_TOKEN,
   properties: { os: "windows", browser: "chrome", device: "laptop" },
   // see https://discord.com/developers/docs/topics/gateway#list-of-intents
-  intents: (1 << 9) | (1 << 15),
+  intents: (1 << 9) | (1 << 15) | (1 << 10),
 };
 
 // e.g. "https://discord.com/api/v10"

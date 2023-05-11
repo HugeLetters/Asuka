@@ -1,6 +1,6 @@
 {
   "name": "asuka",
-  "version": "0.9",
+  "version": "0.9.0",
   "type": "module",
   "bin": {
     "asuka": "./main.ps1"
@@ -12,17 +12,17 @@
   "dependencies": {
     "colors": "1.4.0",
     "dotenv": "^16.0.3",
-    "html-to-text": "^9.0.4",
+    "html-to-text": "^9.0.5",
     "moment": "^2.29.4",
-    "sequelize": "^6.27.0",
-    "sharp": "^0.31.2",
-    "sqlite3": "^5.1.4",
-    "ws": "^8.11.0",
-    "zod": "^3.20.6"
+    "sequelize": "^6.31.1",
+    "sharp": "^0.32.1",
+    "sqlite3": "^5.1.6",
+    "ws": "^8.13.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
-    "eslint": "^8.36.0",
-    "nodemon": "^2.0.20",
+    "eslint": "^8.40.0",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1"
   }
 }

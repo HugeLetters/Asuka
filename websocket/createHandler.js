@@ -10,14 +10,12 @@ export default function (bot) {
     bot.websocket.addEventListener(eventType, event => {
       console.log(colors.bgCyan(`[${event.type}] ${moment().format("DD.MM.Y HH:mm:ss")}`));
       console.log(
-        colors.yellow(
-          {
-            open: "Connection opened",
-            error: `Error: ${event}`,
-            close: `Connection closed: ${event.code} - ${event.reason}`,
-            message: `Data received: ${event.data}`,
-          }[event.type]
-        )
+        {
+          open: colors.bgGreen.black("Connection opened"),
+          error: colors.bgRed(`Error: ${JSON.stringify(event)}`),
+          close: colors.bgMagenta.black(`Connection closed: ${event.code} - ${event.reason}`),
+          message: colors.yellow(`Data received: ${event.data}`),
+        }[event.type]
       );
     })
   );

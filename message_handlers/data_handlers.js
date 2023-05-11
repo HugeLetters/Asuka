@@ -73,13 +73,13 @@ const dataTypeHandler = async (bot, data) => {
 
   switch (t) {
     case "READY":
-      console.log(colors.bgGreen.black("Authenticated"));
+      console.log(colors.bgGreen("Authenticated"));
       bot.authenticated = true;
       bot.resumeGatewayURL = d.resume_gateway_url;
       bot.sessionID = d.session_id;
       return;
     case "RESUMED":
-      console.log(colors.bgGreen.black("Connection resumed"));
+      console.log(colors.bgGreen("Connection resumed"));
       bot.reconnecting = false;
       setTimeout(() => heartbeat(bot), (bot.heartbeatInterval * Math.random()) / 10);
       return;
@@ -91,7 +91,6 @@ const dataTypeHandler = async (bot, data) => {
           } by ${d.author.username}`
         )
       );
-
       if (!bot.authenticated)
         return console.log(
           colors.bgRed("Message will not be parsed because bot is not authenticated")
@@ -107,6 +106,9 @@ const dataTypeHandler = async (bot, data) => {
         match[3].split(/\s+/).filter(x => x != "")
       );
       responseHandler(response);
+      break;
+    case "MESSAGE_REACTION_ADD":
+      d.emoji.name === "🛑" && bot.deleteMessage(d.channel_id, d.message_id);
       break;
     default:
       console.log(colors.bgRed.black("Unhandled event"));

@@ -1,10 +1,12 @@
 export const getGatewayHandler = async (url, header) => {
-    const response = await fetch(url + "/gateway/bot", {
-        method: 'GET',
-        headers: header
-    }).then(
-        x => x.json(),
-        x => { throw x });
-
-    return response.url;
-}
+  return fetch(url + "/gateway/bot", {
+    method: "GET",
+    headers: header,
+  })
+    .then(x => x.json())
+    .then(x => x.url)
+    .catch(e => {
+      console.error(e);
+      return;
+    });
+};

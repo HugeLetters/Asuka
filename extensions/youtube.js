@@ -1,20 +1,24 @@
 import { randomChoiceArray } from "./utils.js";
-import { tagChannel } from "../message_handlers/utils.js";
 
 export const alias = {
   requestWebm: ["скинь", "видео", "вебм", "ютюб"],
 };
 
-const permittedChannel = "284783098124828673";
+const guildRestrictions = new Map();
+guildRestrictions.set("188693067769839618", { "188693067769839618": true });
 
-export const requestWebm = async ({ id: message_id, channel_id }, bot, command, keywords) => {
+export const requestWebm = async (
+  { id: message_id, channel_id, guild_id },
+  bot,
+  command,
+  keywords
+) => {
   if (keywords.join(" ") === "видео про краба")
     return bot.sendMessage(channel_id, "https://youtu.be/o55ZaLGsEuM", { message_id });
 
-  if (channel_id !== permittedChannel)
-    return bot.sendMessage(channel_id, `Тебе сюда ${tagChannel(permittedChannel)} 👈`, {
-      message_id,
-    });
+  const restrictedChannels = guildRestrictions.get(guild_id);
+  if (restrictedChannels && restrictedChannels[channel_id])
+    return bot.sendMessage(channel_id, `Не засоряй этот чат 🙊`, { message_id });
 
   const api_url = new URL(`https://youtube.googleapis.com/youtube/v3/search`);
   api_url.searchParams.set("key", bot.YOUTUBE_API_KEY);
