@@ -6,7 +6,7 @@ async function fetch(url: string) {
   }
   return "Your data :)";
 }
-// test 5
+// test final???
 const fetchData = (url: string) => {
   return new Promise(resolve => {
     const getDelay = (function () {
