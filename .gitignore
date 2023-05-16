@@ -1,8 +1,8 @@
 node_modules
 .env
 
-old/
-/public/*
+old
+public
 
 test.ts
 todo.md

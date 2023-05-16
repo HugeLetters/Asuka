@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["esnext", "DOM"],
+    "lib": ["esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -11,7 +11,8 @@
     "module": "NodeNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]
