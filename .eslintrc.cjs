@@ -21,6 +21,7 @@ module.exports = {
     "unicorn/prefer-top-level-await": "off",
     "unicorn/filename-case": ["warn", { cases: { camelCase: true } }],
     "@typescript-eslint/consistent-type-imports": ["error", { fixStyle: "inline-type-imports" }],
+    "unicorn/prevent-abbreviations": "off",
   },
   ignorePatterns: "old",
 };
