@@ -1,9 +1,13 @@
-import { JSONParseAsync, logEvent, promiseRetry, randomValue as randomNumber } from "./utils";
-import { API_VERSION, AUTHORIZATION_BODY, AUTHORIZATION_HEADER, DISCORD_API_URL } from "./config";
+import { JSONParseAsync, logEvent, promiseRetry, randomNumber } from "./utils";
+import {
+  DISCORD_API_VERSION,
+  GATEWAY_IDENTIFY,
+  AUTHORIZATION_HEADER,
+  DISCORD_API_URL,
+} from "./config";
 import {
   type APIGatewayBotInfo,
   type GatewayHeartbeat,
-  type GatewayIdentify,
   GatewayOpcodes,
   type GatewayReceivePayload,
   type RESTError,
@@ -21,9 +25,8 @@ function getGatewayURL() {
     .then(async response => {
       const body = await response.json();
       if (!response.ok) {
-        const discordError = body as RESTError;
-        console.error(discordError);
-        throw new Error("Discord API has rejected request");
+        console.error(body as RESTError);
+        throw new Error(response.statusText);
       }
       return body as APIGatewayBotInfo;
     })
@@ -31,7 +34,7 @@ function getGatewayURL() {
 }
 
 function websocketConnect(url: string) {
-  const ws = new WebSocket(`${url}/?v=${API_VERSION}&encoding=json`);
+  const ws = new WebSocket(`${url}/?v=${DISCORD_API_VERSION}&encoding=json`);
   const heartbeat = new Heartbeat(ws.send.bind(ws));
 
   ws.on("open", () => {
@@ -39,7 +42,7 @@ function websocketConnect(url: string) {
   });
   ws.on("close", (code, reason) => {
     logEvent.websocket("CLOSE");
-    console.log(`${chalk.bgYellow("Code")}: ${code}\n${chalk.bgYellow("Reason")}: ${reason}`);
+    console.log(`${chalk.bgYellow("Code:")} ${code}\n${chalk.bgYellow("Reason:")} ${reason}`);
   });
   ws.on("error", error => {
     logEvent.websocket("ERROR");
@@ -75,11 +78,7 @@ function websocketConnect(url: string) {
       case GatewayOpcodes.Hello: {
         heartbeat.interval = payload.heartbeat_interval;
         heartbeat.queueBeat(true);
-        const identify: GatewayIdentify = {
-          d: AUTHORIZATION_BODY,
-          op: GatewayOpcodes.Identify,
-        };
-        ws.send(JSON.stringify(identify));
+        ws.send(JSON.stringify(GATEWAY_IDENTIFY));
         break;
       }
       case GatewayOpcodes.HeartbeatAck: {
@@ -101,24 +100,33 @@ class Heartbeat {
   #timeout?: ReturnType<typeof setTimeout>;
   // eslint-disable-next-line unicorn/no-null
   #data: GatewayHeartbeat = { op: GatewayOpcodes.Heartbeat, d: null };
+  /** @param send this function will be called when sending a heartbeat */
   constructor(send: WebSocket["send"]) {
     this.#beat = () => send(JSON.stringify(this.#data));
   }
+  /** Setter for heartbeat sequence */
   set sequence(sequence: Exclude<GatewayReceivePayload["s"], null>) {
     this.#data.d = sequence;
   }
+  /** Send heartbead immediately. Cancels queued heartbeats
+   * @event Heartbeat#interval
+   */
   immediateBeat = () => {
     this.unqueueBeat();
     this.#beat();
   };
+  /** Queue a heartbeat after the inveral. Cancels queued heartbeats
+   * @param fast decrease hearbeat interval for this instance
+   */
   queueBeat = (fast?: boolean) => {
     if (!this.interval)
       throw new Error("Trying to queue a hearbeat before providing heartbeat interval");
-    const delay = randomNumber(0.9, 1) * this.interval * (fast ? 0.1 : 1);
-    logEvent("HEARTBEAT", `scheduled in ${delay.toFixed(0)} ms`);
+    const interval = randomNumber(0.9, 1) * this.interval * (fast ? 0.1 : 1);
+    logEvent("HEARTBEAT", `scheduled in ${interval.toFixed(0)} ms`);
     this.unqueueBeat();
-    this.#timeout = setTimeout(this.#beat, delay);
+    this.#timeout = setTimeout(this.#beat, interval);
   };
+  /** Cancel queued heartbeat */
   unqueueBeat = () => {
     clearTimeout(this.#timeout);
   };
